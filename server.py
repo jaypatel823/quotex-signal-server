@@ -16,8 +16,11 @@ async def echo(websocket, path):
 
 async def main():
     print(f"🚀 WebSocket Server Starting on ws://{HOST}:{PORT} ...")
-    server = await websockets.serve(echo, HOST, PORT)
-    await server.wait_closed()
+    try:
+        server = await websockets.serve(echo, HOST, PORT)
+        await server.wait_closed()
+    except Exception as e:
+        print(f"❌ Server Error: {e}")
 
 if __name__ == "__main__":
     asyncio.run(main())
