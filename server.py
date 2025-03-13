@@ -1,5 +1,9 @@
+import os
 import asyncio
 import websockets
+
+PORT = int(os.getenv("PORT", 8765))  # Render के दिए गए पोर्ट को एक्सेप्ट करें
+HOST = "0.0.0.0"
 
 connected_clients = set()
 
@@ -7,7 +11,6 @@ async def handler(websocket, path):
     connected_clients.add(websocket)
     try:
         async for message in websocket:
-            # सभी क्लाइंट्स को मैसेज भेजें
             for client in connected_clients:
                 if client != websocket:
                     await client.send(message)
@@ -17,7 +20,8 @@ async def handler(websocket, path):
         connected_clients.remove(websocket)
 
 async def main():
-    server = await websockets.serve(handler, "0.0.0.0", 8765)
+    server = await websockets.serve(handler, HOST, PORT)
     await server.wait_closed()
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())
